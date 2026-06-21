@@ -6,3 +6,8 @@ edition = "2024"
 [dependencies]
 axum = "0.8.9"
 tokio = { version = "1.52.3", features = ["macros", "rt-multi-thread"] }
+serde = {version="1.0.228", features = ["derive"]} 
+rand = "0.10.1"
+utoipa = "5.5.0"
+utoipa-swagger-ui = { version="9.0.2", features=["axum"] }
+utoipa-axum = "0.2.0"
