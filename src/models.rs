@@ -9,7 +9,7 @@ pub struct ShortenRequest {
 #[derive(Serialize, ToSchema)]
 pub struct ShortenReply {
     pub code: String,
-    pub short_url: String,
+    pub url: String,
 }
 
 #[derive(Serialize, ToSchema)]
