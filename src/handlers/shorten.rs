@@ -23,9 +23,14 @@ pub async fn shorten(
     State(state): State<AppState>,
     Json(payload): Json<ShortenRequest>,
 ) -> Json<ShortenReply> {
-    let code: String = generate_code();
-
     let mut map = state.urls.lock().await;
+
+    let code: String = loop {
+        let candidate = generate_code();
+        if !map.contains_key(&candidate){
+            break candidate; 
+        }
+    };
 
     map.insert(code.clone(), payload.url);
 
