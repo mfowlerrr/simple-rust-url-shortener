@@ -5,7 +5,7 @@ use tracing::{debug, error};
 
 use crate::{
     models::{GetReply, ShortenReply}, 
-    state::AppState, 
+    state::{AppState, UrlStoreTrait}, 
 };
 
 #[tracing::instrument]
@@ -28,9 +28,9 @@ pub async fn get_url(
 ) -> Result<Json<GetReply>, StatusCode> {
     debug!("Get by URL called");
 
-    let map = state.urls.lock().await;
+    // let map = state.store.map.lock().await;
 
-    let url = match map.get(&url_code) {
+    let url = match state.store.get(&url_code).await {
         Some(x) => x, 
         None =>  {
             error!("No url is stored with the provided code");
@@ -54,11 +54,5 @@ pub async fn get_urls(
 ) -> Result<Json<Vec<ShortenReply>>, StatusCode> {
     debug!("Get ALL URLs called");
 
-    let map = state.urls.lock().await;
-
-    let res: Vec<ShortenReply> = map.iter().map(|(k, v)| ShortenReply {
-        code: k.clone(), url: v.clone()
-    }).collect();
-
-    Ok(Json(res))
+    Ok(Json(state.store.get_all().await))
 }

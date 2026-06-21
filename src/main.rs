@@ -7,9 +7,8 @@ use crate::handlers::{
     get_url::{__path_get_url, __path_get_urls, get_url, get_urls},
     shorten::{__path_shorten, shorten},
 };
-use crate::state::AppState;
-use std::{collections::HashMap, sync::Arc};
-use tokio::{net::TcpListener, sync::Mutex};
+use crate::state::{AppState, InMemoryStore};
+use tokio::net::TcpListener;
 use tracing::info;
 
 #[tokio::main]
@@ -18,7 +17,7 @@ async fn main() {
     tracing_subscriber::fmt::init();
 
     let shared_state: AppState = AppState {
-        urls: Arc::new(Mutex::new(HashMap::new())),
+        store: InMemoryStore::new(),
     };
 
     let (app, api) = utoipa_axum::router::OpenApiRouter::new()

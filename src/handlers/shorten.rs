@@ -7,7 +7,7 @@ use tracing::debug;
 
 use crate::{
     models::{ShortenReply, ShortenRequest}, 
-    state::AppState, 
+    state::{AppState, UrlStoreTrait},
     utils::generate_code, 
 };
 
@@ -27,16 +27,15 @@ pub async fn shorten(
 ) -> Json<ShortenReply> {
     debug!("Shorten called.");
 
-    let mut map = state.urls.lock().await;
-
     let code: String = loop {
         let candidate = generate_code();
-        if !map.contains_key(&candidate){
-            break candidate; 
-        }
+        match state.store.get(&candidate).await {
+            None => break candidate, 
+            Some(_) => continue
+        };
     };
 
-    map.insert(code.clone(), payload.url);
+    state.store.insert(code.clone(), payload.url).await;
 
     Json(ShortenReply {
         code: code.clone(),
