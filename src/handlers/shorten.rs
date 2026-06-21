@@ -3,6 +3,7 @@ use axum::{
     extract::State, 
     Json,
 };
+use tracing::debug; 
 
 use crate::{
     models::{ShortenReply, ShortenRequest}, 
@@ -10,6 +11,7 @@ use crate::{
     utils::generate_code, 
 };
 
+#[tracing::instrument]
 #[utoipa::path(
     post, 
     path = "/url", 
@@ -23,6 +25,8 @@ pub async fn shorten(
     State(state): State<AppState>,
     Json(payload): Json<ShortenRequest>,
 ) -> Json<ShortenReply> {
+    debug!("Shorten called.");
+
     let mut map = state.urls.lock().await;
 
     let code: String = loop {

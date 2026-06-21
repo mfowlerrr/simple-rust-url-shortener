@@ -10,9 +10,13 @@ use crate::handlers::{
 use crate::state::AppState;
 use std::{collections::HashMap, sync::Arc};
 use tokio::{net::TcpListener, sync::Mutex};
+use tracing::info;
 
 #[tokio::main]
 async fn main() {
+    // setup logging tracing
+    tracing_subscriber::fmt::init();
+
     let shared_state: AppState = AppState {
         urls: Arc::new(Mutex::new(HashMap::new())),
     };
@@ -27,6 +31,11 @@ async fn main() {
         .merge(utoipa_swagger_ui::SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", api))
         .with_state(shared_state);
 
-    let listener: TcpListener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    let host = String::from("0.0.0.0");
+    let port = 3000;
+    let addr = format!("{}:{}", host, port);
+
+    let listener: TcpListener = tokio::net::TcpListener::bind(&addr).await.unwrap();
+    info!(addr=%addr, "Starting Server");
     axum::serve(listener, app).await.unwrap();
 }

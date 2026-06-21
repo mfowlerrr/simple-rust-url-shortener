@@ -11,3 +11,5 @@ rand = "0.10.1"
 utoipa = "5.5.0"
 utoipa-swagger-ui = { version="9.0.2", features=["axum"] }
 utoipa-axum = "0.2.0"
+tracing = "0.1.44"
+tracing-subscriber = "0.3.23"
