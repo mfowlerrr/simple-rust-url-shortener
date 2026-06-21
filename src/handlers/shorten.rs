@@ -31,6 +31,6 @@ pub async fn shorten(
 
     Json(ShortenReply {
         code: code.clone(),
-        short_url: format!("http://localhost:3000/{}", code),
+        url: format!("http://localhost:3000/{}", code),
     })
 }

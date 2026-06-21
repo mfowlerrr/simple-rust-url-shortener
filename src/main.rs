@@ -4,7 +4,7 @@ mod state;
 mod utils;
 
 use crate::handlers::{
-    get_url::{__path_get_url, get_url},
+    get_url::{__path_get_url, __path_get_urls, get_url, get_urls},
     shorten::{__path_shorten, shorten},
 };
 use crate::state::AppState;
@@ -20,6 +20,7 @@ async fn main() {
     let (app, api) = utoipa_axum::router::OpenApiRouter::new()
         .routes(utoipa_axum::routes!(shorten))
         .routes(utoipa_axum::routes!(get_url))
+        .routes(utoipa_axum::routes!(get_urls))
         .split_for_parts();
 
     let app = app

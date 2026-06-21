@@ -1,17 +1,15 @@
-
-
 use axum::{
     Json, extract::{Path, State}, http::StatusCode
 };
 
 use crate::{
-    models::GetReply, 
+    models::{GetReply, ShortenReply}, 
     state::AppState, 
 };
 
 #[utoipa::path(
     get, 
-    path = "/{url_code}", 
+    path = "/url/{url_code}", 
     params(
         ("url_code" = String, Path, description="Short URL code")
 
@@ -35,4 +33,26 @@ pub async fn get_url(
     };
 
     Ok(Json(GetReply { url: url.clone()}))
+}
+
+
+#[utoipa::path(
+    get, 
+    path = "/url", 
+    responses( 
+        (status = 200, body=Vec<ShortenReply>), 
+    )
+
+)]
+pub async fn get_urls(
+    State(state): State<AppState>,
+) -> Result<Json<Vec<ShortenReply>>, StatusCode> {
+
+    let map = state.urls.lock().await;
+
+    let res: Vec<ShortenReply> = map.iter().map(|(k, v)| ShortenReply {
+        code: k.clone(), url: v.clone()
+    }).collect();
+
+    Ok(Json(res))
 }
