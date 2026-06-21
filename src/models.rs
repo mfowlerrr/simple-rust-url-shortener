@@ -11,3 +11,8 @@ pub struct ShortenReply {
     pub code: String,
     pub short_url: String,
 }
+
+#[derive(Serialize, ToSchema)]
+pub struct GetReply {
+    pub url: String,
+}

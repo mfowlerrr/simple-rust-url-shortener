@@ -3,7 +3,10 @@ mod models;
 mod state;
 mod utils;
 
-use crate::handlers::shorten::{__path_shorten, shorten};
+use crate::handlers::{
+    get_url::{__path_get_url, get_url},
+    shorten::{__path_shorten, shorten},
+};
 use crate::state::AppState;
 use std::{collections::HashMap, sync::Arc};
 use tokio::{net::TcpListener, sync::Mutex};
@@ -16,6 +19,7 @@ async fn main() {
 
     let (app, api) = utoipa_axum::router::OpenApiRouter::new()
         .routes(utoipa_axum::routes!(shorten))
+        .routes(utoipa_axum::routes!(get_url))
         .split_for_parts();
 
     let app = app
